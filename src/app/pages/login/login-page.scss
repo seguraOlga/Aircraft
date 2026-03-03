@@ -1,0 +1,76 @@
+:host {
+  min-height: 100dvh;
+  display: block;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.login-shell {
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  padding: 1.5rem;
+  background: linear-gradient(135deg, #00203f 0%, #005b96 45%, #6497b1 100%);
+}
+
+.login-card {
+  width: min(420px, 100%);
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.2);
+}
+
+h1 {
+  margin: 0;
+  font-size: 1.6rem;
+  color: #00203f;
+}
+
+p {
+  margin: 0.5rem 0 1.5rem;
+  color: #4a5d74;
+}
+
+form {
+  display: grid;
+  gap: 0.65rem;
+}
+
+label {
+  color: #2d3e50;
+  font-weight: 600;
+}
+
+input {
+  border: 1px solid #c7d3df;
+  border-radius: 8px;
+  padding: 0.7rem 0.75rem;
+  font-size: 0.95rem;
+}
+
+input:focus {
+  outline: 2px solid #4f87b8;
+  border-color: transparent;
+}
+
+button {
+  margin-top: 0.6rem;
+  border: 0;
+  border-radius: 8px;
+  padding: 0.8rem;
+  background: #00203f;
+  color: #ffffff;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+button:disabled {
+  opacity: 0.7;
+  cursor: wait;
+}
+
+.field-error,
+.api-error {
+  color: #b42318;
+  margin: 0;
+}

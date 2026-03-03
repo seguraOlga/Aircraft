@@ -1,0 +1,79 @@
+<section class="dashboard">
+  <header class="dashboard-header">
+    <div>
+      <h1>Panel de usuario</h1>
+      <p>Tareas asignadas al usuario autenticado.</p>
+    </div>
+    <div class="header-actions">
+      <button type="button" (click)="loadMyTasks()" [disabled]="loading()">Actualizar</button>
+      <app-logout-button />
+    </div>
+  </header>
+
+  <section class="stats">
+    <article class="stat-card">
+      <span>Mis tareas</span>
+      <strong>{{ totalTasks() }}</strong>
+    </article>
+    <article class="stat-card overdue">
+      <span>Atrasadas</span>
+      <strong>{{ overdueTasks() }}</strong>
+    </article>
+  </section>
+
+  @if (loading()) {
+    <p class="info">Cargando tareas...</p>
+  } @else if (error()) {
+    <p class="error">{{ error() }}</p>
+  } @else if (!tasks().length) {
+    <p class="info">No tienes tareas asignadas.</p>
+  } @else {
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Titulo</th>
+            <th>Estado</th>
+            <th>Asignacion</th>
+            <th>Entrega</th>
+            <th>Indicadores</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (task of tasks(); track task.idTask) {
+            <tr>
+              <td>
+                <div class="title-cell">
+                  <strong>{{ task.title }}</strong>
+                  <small>#{{ task.idTask }}</small>
+                </div>
+              </td>
+              <td><span class="badge">{{ task.stateValue }}</span></td>
+              <td>{{ task.dateAssignment | date: 'dd/MM/yyyy HH:mm' }}</td>
+              <td>
+                @if (task.dateDelivery) {
+                  {{ task.dateDelivery | date: 'dd/MM/yyyy HH:mm' }}
+                } @else {
+                  Sin fecha
+                }
+              </td>
+              <td>
+                <div class="flags">
+                  @if (task.isUnassigned) {
+                    <span class="flag warning">Sin asignar</span>
+                  }
+                  @if (task.isOverdue) {
+                    <span class="flag danger">Atrasada</span>
+                  }
+                  @if (!task.isUnassigned && !task.isOverdue) {
+                    <span class="flag ok">En plazo</span>
+                  }
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>
