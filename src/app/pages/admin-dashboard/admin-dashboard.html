@@ -1,0 +1,146 @@
+<section class="dashboard">
+  <header class="dashboard-header">
+    <div>
+      <h1>Dashboard de administrador</h1>
+      <p>Vista general de tareas de reparacion del aeropuerto.</p>
+    </div>
+    <div class="header-actions">
+      <button type="button" (click)="loadTasks()" [disabled]="loading()">Actualizar</button>
+      <app-logout-button></app-logout-button>
+    </div>
+  </header>
+
+  <section class="create-task">
+    <h2>Crear tarea</h2>
+    <form [formGroup]="createTaskForm">
+      <label>
+        Titulo
+        <input type="text" formControlName="title" placeholder="Ej. Revisar motor avion A320" />
+      </label>
+
+      <label>
+        Descripcion
+        <textarea formControlName="description" rows="3" placeholder="Detalles de la tarea"></textarea>
+      </label>
+
+      <div class="form-row">
+        <label>
+          Fecha de entrega (opcional)
+          <input type="datetime-local" formControlName="dateDelivery" />
+        </label>
+      </div>
+
+      <div class="assignees-picker">
+        <div class="assignees-header">
+          <span>Asignar usuarios (opcional)</span>
+          <button type="button" class="secondary-btn" (click)="loadUsers()" [disabled]="usersLoading()">
+            {{ usersLoading() ? 'Cargando...' : 'Recargar usuarios' }}
+          </button>
+        </div>
+
+        @if (usersError()) {
+          <p class="error">{{ usersError() }}</p>
+        } @else if (!users().length) {
+          <p class="info">No hay usuarios disponibles para asignar.</p>
+        } @else {
+          <div class="users-grid">
+            @for (user of users(); track user.idUser) {
+              <label class="user-option">
+                <input
+                  #assigneeCheckbox
+                  type="checkbox"
+                  [checked]="isAssigneeSelected(user.idUser)"
+                  (change)="toggleAssignee(user.idUser, assigneeCheckbox.checked)"
+                />
+                <span>{{ user.userName }}</span>
+                <small>{{ user.role }}</small>
+              </label>
+            }
+          </div>
+        }
+      </div>
+
+      <div class="create-actions">
+        <button type="button" (click)="submitCreateTask()">
+          {{ creating() ? 'Creando...' : 'Crear tarea' }}
+        </button>
+      </div>
+    </form>
+
+    @if (createError()) {
+      <p class="error">{{ createError() }}</p>
+    }
+    @if (createSuccess()) {
+      <p class="success">{{ createSuccess() }}</p>
+    }
+  </section>
+
+  <section class="stats">
+    <article class="stat-card">
+      <span>Total tareas</span>
+      <strong>{{ totalTasks() }}</strong>
+    </article>
+    <article class="stat-card overdue">
+      <span>Atrasadas</span>
+      <strong>{{ overdueTasks() }}</strong>
+    </article>
+    <article class="stat-card unassigned">
+      <span>Sin asignar</span>
+      <strong>{{ unassignedTasks() }}</strong>
+    </article>
+  </section>
+
+  @if (loading()) {
+    <p class="info">Cargando tareas...</p>
+  } @else if (error()) {
+    <p class="error">{{ error() }}</p>
+  } @else if (!tasks().length) {
+    <p class="info">No hay tareas disponibles.</p>
+  } @else {
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Titulo</th>
+            <th>Estado</th>
+            <th>Asignacion</th>
+            <th>Entrega</th>
+            <th>Asignados</th>
+            <th>Indicadores</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (task of tasks(); track task.idTask) {
+            <tr>
+              <td>
+                <div class="title-cell">
+                  <strong>{{ task.title }}</strong>
+                  <small>#{{ task.idTask }}</small>
+                </div>
+              </td>
+              <td>
+                <span class="badge">{{ task.stateValue }} ({{ task.stateCode }})</span>
+              </td>
+              <td>{{ task.dateAssignment | date: 'dd/MM/yyyy HH:mm' }}</td>
+              <td>{{ task.dateDelivery | date: 'dd/MM/yyyy HH:mm' }}</td>
+              <td>{{ assigneesLabel(task) }}</td>
+              <td>
+                <div class="flags">
+                  @if (task.isUnassigned) {
+                    <span class="flag warning">Sin asignar</span>
+                  }
+                  @if (task.isOverdue) {
+                    <span class="flag danger">Atrasada</span>
+                  }
+                  @if (!task.isUnassigned && !task.isOverdue) {
+                    <span class="flag ok">En plazo</span>
+                  }
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>
